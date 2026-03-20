@@ -1,8 +1,4 @@
 # KavachGo
-
-> **Guidewire DEVTrails 2026 | Phase 1 — Seed Submission**
-> Persona: Grocery / Q-Commerce Delivery (Zepto / Blinkit)
-
 ---
 
 ## Inspiration
