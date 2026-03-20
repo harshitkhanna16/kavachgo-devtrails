@@ -1,16 +1,13 @@
-# KavachGo
+# KavachGo — AI-Powered Parametric Income Insurance for Q-Commerce Delivery Partners
 ---
 
 ## Inspiration
 
 *Kavach* (कवच) means armor in Hindi. Every Q-commerce delivery partner racing to fulfill Zepto's 10-minute and Blinkit's 15-minute promises deserves that armor.
-
 India has millions of dark-store delivery partners whose entire livelihood depends on uninterrupted access to a single 3 km zone. When a flash flood hits, when AQI crosses 400, when a local bandh shuts the roads — they lose ₹300–600 in a single afternoon. No insurance. No safety net. No recourse.
-
 **KavachGo** wraps every delivery partner in a digital armor — a fully automated, AI-powered parametric income insurance platform that detects disruptions via real-time APIs and sends a UPI payout within minutes. No forms. No waiting. Just protection, as fast as their deliveries.
 
 ---
-
 ## Persona & Scenario
 
 ### Target Persona: Q-Commerce Delivery Partner (Zepto / Blinkit)
@@ -135,15 +132,46 @@ Working hours are defined as **9 AM – 9 PM only**. Disruptions outside this wi
 - **Training Data**: Synthetic dataset of 60,000 Q-commerce worker profiles + 3 years of OpenWeatherMap historical data for 20 Indian cities
 
 ### 2. Intelligent Fraud Detection Engine
-- **Model**: Isolation Forest (unsupervised anomaly detection)
-- **Fraud Signals**:
-  - Worker GPS not within 5 km of claimed dark store zone during disruption window
-  - Delivery activity detected on platform during claimed disruption
-  - Same device filing claims across multiple worker accounts
-  - Trigger event confirmed by only 1 source (requires ≥ 2 independent APIs)
-  - Claim pattern matches known fraud archetypes (e.g., claims always on Friday evening)
-- **Output**: Fraud Risk Score (0–100). Score > 65 → auto-hold + manual review. Score > 85 → auto-reject + flag account.
-- **Rule-Based Hard Layer**: Max 4 claims/week, 48-hr cooldown per trigger type
+
+KavachGo operates a **3-layer fraud detection architecture** to ensure every payout is legitimate.
+
+#### Layer 1 — Real-Time Rule Engine (Hard Checks)
+Instant checks that run the moment a claim is triggered:
+- Maximum 4 claims per worker per week
+- 48-hour cooldown per trigger type (e.g., cannot claim AQI twice in 48 hrs)
+- Claim window restricted to 9 AM – 9 PM working hours only
+- Disruption must be confirmed by **at least 2 independent data sources** before claim is accepted
+
+#### Layer 2 — GPS & Activity Validation
+Cross-checks the worker's physical presence and platform activity:
+- Worker's live GPS must be within 5 km of their registered dark store zone during the disruption window
+- If delivery activity is detected on Zepto/Blinkit platform during the claimed disruption, the claim is auto-rejected
+- Device fingerprinting to prevent one device from filing claims across multiple worker accounts
+- Zone-level validation — if the disruption event did not affect the worker's specific dark store zone, the claim is rejected even if the city-wide event was real
+
+#### Layer 3 — ML Anomaly Detection (Isolation Forest)
+An unsupervised Isolation Forest model continuously learns normal vs. suspicious claim behavior:
+
+| Fraud Signal | Action |
+|---|---|
+| GPS outside disruption zone | Auto-reject |
+| Delivery activity during claimed disruption | Auto-reject |
+| Claim pattern always on same day/time | Flag for review |
+| Multiple accounts from same device | Auto-hold + block |
+| Trigger confirmed by only 1 API source | Auto-hold |
+| Claim velocity spike (3+ claims in 7 days) | Manual review |
+
+**Fraud Risk Score Output:**
+```
+Score 0–64   → Auto-approved, payout processed instantly
+Score 65–84  → Auto-hold, flagged for manual review within 2 hrs
+Score 85–100 → Auto-rejected, account flagged, worker notified
+```
+
+#### Fraud Prevention Stats (Projected)
+- Expected false positive rate: < 3% (legitimate claims wrongly held)
+- Expected fraud catch rate: > 91% based on Isolation Forest benchmarks on similar anomaly datasets
+- Average claim review time for held claims: < 2 hours
 
 ### 3. Predictive Risk Heatmap
 - Every Monday, KavachGo generates a 7-day risk heatmap per dark store zone
@@ -239,7 +267,6 @@ Per problem statement rules, KavachGo **strictly excludes**:
 | Harshit Khanna | Full Stack + ML Lead |
 | Swapnil Saini | Backend Development |
 | Divyanshu Sharma | Frontend + UI/UX |
-
 ---
 *KavachGo — Digital Armor for India's Q-Commerce Warriors.*
 *Guidewire DEVTrails 2026 | In Partnership with EY*
