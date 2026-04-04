@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KavachGo — Digital Armor for Gig Workers</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF5722;
+    --orange-light: #FF7043;
+    --orange-glow: rgba(255,87,34,0.18);
+    --teal: #00BCD4;
+    --teal-dark: #0097A7;
+    --green: #00E676;
+    --red: #FF1744;
+    --yellow: #FFD600;
+    --bg: #0A0E1A;
+    --bg2: #0F1525;
+    --bg3: #161D30;
+    --card: #1A2235;
+    --card2: #1F2A40;
+    --border: rgba(255,255,255,0.07);
+    --text: #E8EDF5;
+    --muted: #6B7A99;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events:none;
+    z-index:0;
+    opacity:.4;
+  }
+
+  /* ─── GRID BACKGROUND ─── */
+  body::after {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image: 
+      linear-gradient(rgba(0,188,212,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,188,212,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,14,26,0.8);
+    backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: var(--orange);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 0 20px var(--orange-glow);
+  }
+
+  .logo-text {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span { color: var(--orange); }
+
+  .logo-tagline {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  .header-badge {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity:1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* ─── MAIN LAYOUT ─── */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    text-align: center;
+    padding: 48px 0 40px;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,87,34,0.1);
+    border: 1px solid rgba(255,87,34,0.25);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--orange-light);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: clamp(36px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 18px;
+  }
+
+  h1 .highlight {
+    color: var(--orange);
+    position: relative;
+  }
+
+  .hero-sub {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 520px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ─── STEP FLOW ─── */
+  .step-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .step-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.3s;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .step-item.active {
+    background: var(--card);
+    border-color: var(--orange);
+    color: var(--text);
+  }
+
+  .step-item.done {
+    color: var(--green);
+  }
+
+  .step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .step-item.active .step-num { background: var(--orange); color: white; }
+  .step-item.done .step-num { background: var(--green); color: #000; }
+
+  /* ─── SECTION PANELS ─── */
+  .section {
+    display: none;
+    animation: fadeSlide 0.4s ease;
+  }
+
+  .section.visible { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity:0; transform: translateY(16px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .card-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  /* ─── FORM INPUTS ─── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:600px){ .form-grid { grid-template-columns: 1fr; } }
+
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  input, select {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px var(--orange-glow);
+  }
+
+  select option { background: var(--bg2); }
+
+  /* ─── PLAN CARDS ─── */
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  @media(max-width:600px){ .plans { grid-template-columns: 1fr; } }
+
+  .plan {
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .plan:hover { border-color: rgba(255,87,34,0.4); transform: translateY(-2px); }
+  .plan.selected { border-color: var(--orange); background: rgba(255,87,34,0.07); }
+
+  .plan::before {
+    content:'';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: transparent;
+    transition: background 0.25s;
+  }
+
+  .plan.selected::before { background: var(--orange); }
+
+  .plan-badge {
+    display: inline-block;
+    background: var(--bg3);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .plan.selected .plan-badge { background: var(--orange-glow); color: var(--orange-light); }
+
+  .plan-price {
+    font-family: var(--font-head);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .plan-price span { font-size: 14px; font-weight: 400; color: var(--muted); }
+
+  .plan-payout {
+    font-size: 12px;
+    color: var(--green);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .plan-features { list-style: none; text-align: left; }
+  .plan-features li {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 4px 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; }
+
+  /* ─── AI RISK METER ─── */
+  .risk-display {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  @media(max-width:600px){ .risk-display { grid-template-columns: 1fr; } }
+
+  .risk-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .risk-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+
+  .risk-value {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .risk-note { font-size: 11px; color: var(--muted); }
+
+  .risk-bar-wrap {
+    background: var(--bg3);
+    border-radius: 4px;
+    height: 6px;
+    margin: 10px 0 6px;
+    overflow: hidden;
+  }
+
+  .risk-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1.2s ease;
+  }
+
+  /* ─── TRIGGERS ─── */
+  .triggers {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  @media(max-width:500px){ .triggers { grid-template-columns: 1fr; } }
+
+  .trigger-btn {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .trigger-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, var(--orange-glow), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .trigger-btn:hover { border-color: rgba(255,87,34,0.4); transform: translateY(-2px); }
+  .trigger-btn:hover::after { opacity: 1; }
+  .trigger-btn:active { transform: scale(0.98); }
+
+  .trigger-btn.fired {
+    border-color: var(--orange);
+    background: rgba(255,87,34,0.08);
+  }
+
+  .trigger-icon { font-size: 32px; margin-bottom: 10px; }
+
+  .trigger-name {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .trigger-condition { font-size: 11px; color: var(--muted); }
+
+  .trigger-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--bg3);
+    color: var(--muted);
+    transition: all 0.3s;
+  }
+
+  .trigger-btn.fired .trigger-status {
+    background: rgba(255,87,34,0.15);
+    color: var(--orange-light);
+  }
+
+  /* ─── CLAIM FLOW ─── */
+  .claim-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .claim-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    opacity: 0.35;
+    transition: all 0.4s;
+  }
+
+  .claim-step.active { opacity: 1; border-color: var(--orange); }
+  .claim-step.done { opacity: 1; border-color: var(--green); }
+
+  .claim-step-icon {
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: background 0.3s;
+  }
+
+  .claim-step.done .claim-step-icon { background: rgba(0,230,118,0.15); }
+  .claim-step.active .claim-step-icon { background: var(--orange-glow); }
+
+  .claim-step-text { flex: 1; }
+  .claim-step-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+  .claim-step-detail { font-size: 12px; color: var(--muted); }
+
+  .claim-step-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .badge-pending { background: rgba(255,214,0,0.12); color: var(--yellow); }
+  .badge-processing { background: rgba(255,87,34,0.12); color: var(--orange-light); }
+  .badge-done { background: rgba(0,230,118,0.12); color: var(--green); }
+
+  /* ─── FRAUD PANEL ─── */
+  .fraud-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media(max-width:600px){ .fraud-grid { grid-template-columns: 1fr; } }
+
+  .fraud-score-ring {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+
+  .ring-container {
+    position: relative;
+    width: 140px; height: 140px;
+    margin-bottom: 16px;
+  }
+
+  .ring-svg { width: 140px; height: 140px; transform: rotate(-90deg); }
+
+  .ring-bg { fill: none; stroke: var(--bg3); stroke-width: 10; }
+  .ring-fill {
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dasharray: 376;
+    stroke-dashoffset: 376;
+    transition: stroke-dashoffset 1.5s ease, stroke 0.5s;
+  }
+
+  .ring-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .ring-score {
+    font-family: var(--font-head);
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .ring-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .fraud-checks { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+
+  .fraud-check-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    opacity: 0.35;
+    transition: opacity 0.4s;
+  }
+
+  .fraud-check-item:last-child { border-bottom: none; }
+  .fraud-check-item.checked { opacity: 1; }
+
+  .check-icon {
+    width: 28px; height: 28px; flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+  }
+
+  .fraud-check-item.checked .check-icon { background: rgba(0,230,118,0.15); }
+
+  .check-label { flex: 1; font-weight: 500; }
+  .check-result { font-size: 11px; color: var(--muted); }
+  .fraud-check-item.checked .check-result { color: var(--green); }
+
+  .model-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,188,212,0.1);
+    border: 1px solid rgba(0,188,212,0.2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--teal);
+    margin-top: 12px;
+    font-weight: 500;
+  }
+
+  /* ─── PAYOUT ─── */
+  .payout-card {
+    background: linear-gradient(135deg, rgba(0,230,118,0.05) 0%, rgba(0,188,212,0.05) 100%);
+    border: 1px solid rgba(0,230,118,0.2);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+  }
+
+  .payout-icon { font-size: 56px; margin-bottom: 16px; }
+
+  .payout-amount {
+    font-family: var(--font-head);
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--green);
+    margin-bottom: 8px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .payout-amount.show { opacity: 1; transform: scale(1); }
+
+  .payout-label { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+
+  .payout-method {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,230,118,0.1);
+    border: 1px solid rgba(0,230,118,0.2);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 500;
+    margin-bottom: 32px;
+  }
+
+  .payout-timeline {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .payout-tl-item { text-align: center; }
+  .payout-tl-val {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .payout-tl-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ─── DASHBOARD ─── */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  @media(max-width:700px){ .dashboard-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .stat-icon { font-size: 22px; margin-bottom: 10px; }
+  .stat-val {
+    font-family: var(--font-head);
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .stat-lbl { font-size: 12px; color: var(--muted); }
+
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 80px;
+    margin-top: 12px;
+  }
+
+  .bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    background: var(--orange);
+    opacity: 0.7;
+    transition: height 0.8s ease, opacity 0.3s;
+    min-height: 4px;
+  }
+  .bar:hover { opacity: 1; }
+  .bar-lbl { font-size: 9px; color: var(--muted); }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--orange);
+    color: white;
+    box-shadow: 0 4px 20px rgba(255,87,34,0.35);
+  }
+
+  .btn-primary:hover {
+    background: var(--orange-light);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(255,87,34,0.45);
+  }
+
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-outline:hover { border-color: var(--orange); color: var(--orange); }
+
+  .btn-sm { padding: 10px 20px; font-size: 13px; border-radius: 10px; }
+
+  .btn-row {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px;
+    justify-content: flex-end;
+  }
+
+  /* ─── WORKER PROFILE ─── */
+  .worker-profile {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+
+  .worker-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--orange), var(--teal));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .worker-info { flex: 1; }
+  .worker-name { font-weight: 700; font-size: 16px; margin-bottom: 3px; }
+  .worker-detail { font-size: 12px; color: var(--muted); }
+
+  .worker-badge {
+    background: rgba(0,230,118,0.1);
+    border: 1px solid rgba(0,230,118,0.2);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 11px;
+    color: var(--green);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* ─── TOAST ─── */
+  #toast {
+    position: fixed;
+    bottom: 32px; right: 32px;
+    background: var(--card2);
+    border: 1px solid var(--green);
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 1000;
+    transform: translateX(140%);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 300px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  #toast.show { transform: translateX(0); }
+
+  /* ─── MISC ─── */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap; gap: 12px;
+  }
+
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .ai-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(0,188,212,0.1);
+    border: 1px solid rgba(0,188,212,0.2);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: var(--teal);
+    font-weight: 600;
+  }
+
+  .disruption-alert {
+    background: rgba(255,87,34,0.08);
+    border: 1px solid rgba(255,87,34,0.3);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .disruption-alert.show { display: flex; }
+
+  .alert-dot {
+    width: 8px; height: 8px; flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--orange);
+    animation: pulse 1s infinite;
+  }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  .text-green { color: var(--green); }
+  .text-orange { color: var(--orange); }
+  .text-muted { color: var(--muted); }
+  .text-red { color: var(--red); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width:600px){ .two-col { grid-template-columns: 1fr; } }
+
+  .info-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-key { color: var(--muted); }
+  .info-val { font-weight: 600; }
+
+  /* ─── PROGRESS ─── */
+  .progress-wrap { background: var(--bg3); border-radius: 4px; height: 6px; overflow: hidden; margin: 8px 0; }
+  .progress-fill { height: 100%; border-radius: 4px; background: var(--orange); transition: width 1s ease; }
+
+  .confetti-burst {
+    position: fixed;
+    top: 50%; left: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 32px;
+    opacity: 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🛡️</div>
+    <div>
+      <div class="logo-text">Kavach<span>Go</span></div>
+      <div class="logo-tagline">Digital Armor · Guidewire DEVTrails 2026</div>
+    </div>
+  </div>
+  <div class="header-badge">
+    <div class="live-dot"></div>
+    <span>Live Monitoring Active</span>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <div class="hero" id="hero">
+    <div class="hero-eyebrow">🏍️ Q-Commerce Delivery Protection</div>
+    <h1>Income protection for<br><span class="highlight">India's gig warriors</span></h1>
+    <p class="hero-sub">Parametric insurance that monitors disruptions in real-time and pays out automatically — no paperwork, no waiting.</p>
+  </div>
+
+  <!-- STEP NAV -->
+  <div class="step-nav" id="stepNav">
+    <div class="step-item active" onclick="goStep(1)" id="step1"><div class="step-num">1</div>Onboarding</div>
+    <div class="step-item" onclick="goStep(2)" id="step2"><div class="step-num">2</div>AI Premium</div>
+    <div class="step-item" onclick="goStep(3)" id="step3"><div class="step-num">3</div>Trigger Simulation</div>
+    <div class="step-item" onclick="goStep(4)" id="step4"><div class="step-num">4</div>Auto Claim</div>
+    <div class="step-item" onclick="goStep(5)" id="step5"><div class="step-num">5</div>Fraud Detection</div>
+    <div class="step-item" onclick="goStep(6)" id="step6"><div class="step-num">6</div>Instant Payout</div>
+    <div class="step-item" onclick="goStep(7)" id="step7"><div class="step-num">7</div>Dashboard</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 1: ONBOARDING -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section visible" id="sec1">
+    <div class="section-header">
+      <div class="section-title">🧑‍💼 Worker Onboarding</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">👤 Personal Details</div>
+      <div class="card-sub">Register your delivery partner profile in under 60 seconds</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="workerName" placeholder="e.g. Name">
+        </div>
+        <div class="form-group">
+          <label>Phone (UPI-linked)</label>
+          <input type="tel" id="workerPhone" placeholder="e.g. 9876543210">
+        </div>
+        <div class="form-group">
+          <label>Platform</label>
+          <select id="workerPlatform">
+            <option value="blinkit">Blinkit</option>
+            <option value="zepto">Zepto</option>
+            <option value="swiggy">Swiggy Instamart</option>
+            <option value="zomato">Zomato</option>
+            <option value="bigbasket">BigBasket Now</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Dark Store Zone / City</label>
+          <select id="workerZone">
+            <option value="hsr">Bengaluru — HSR Layout</option>
+            <option value="koramangala">Bengaluru — Koramangala</option>
+            <option value="indiranagar">Bengaluru — Indiranagar</option>
+            <option value="whitefield">Bengaluru — Whitefield</option>
+            <option value="delhi_south">Delhi — South Zone</option>
+            <option value="mumbai_bandra">Mumbai — Bandra</option>
+            <option value="hyderabad">Hyderabad — Madhapur</option>
+            <option value="pune">Pune — Kothrud</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Avg Weekly Earnings (₹)</label>
+          <select id="workerEarnings">
+            <option value="3500">₹3,500 – ₹4,500</option>
+            <option value="5000">₹4,500 – ₹6,000</option>
+            <option value="7000">₹6,000 – ₹8,000</option>
+            <option value="9000">₹8,000+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Months Active on Platform</label>
+          <select id="workerTenure">
+            <option value="1">Less than 3 months</option>
+            <option value="2">3–6 months</option>
+            <option value="3">6–12 months</option>
+            <option value="4">1–2 years</option>
+            <option value="5">2+ years</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="doOnboard()">Get Protected →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 2: AI PREMIUM -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="sec2">
+    <div class="section-header">
+      <div class="section-title">🤖 AI Risk Assessment</div>
+      <span class="ai-tag">⚡ XGBoost ML Model</span>
+    </div>
+
+    <div id="workerProfileCard" class="worker-profile">
+      <div class="worker-avatar" id="avatarInitial">S</div>
+      <div class="worker-info">
+        <div class="worker-name" id="profileName">Suresh Kumar</div>
+        <div class="worker-detail" id="profileDetail">Blinkit · HSR Layout, Bengaluru</div>
+      </div>
+      <div class="worker-badge">🟢 Policy Active</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 Dynamic Risk Profile <span class="ai-tag" style="margin-left:8px">AI Computed</span></div>
+      <div class="card-sub">XGBoost model trained on 2.1M gig worker claims across 18 Indian cities</div>
+      <div class="risk-display">
+        <div class="risk-item">
+          <div class="risk-label">Zone Risk Score</div>
+          <div class="risk-value" id="zoneScore" style="color:var(--yellow)">—</div>
+          <div class="risk-bar-wrap"><div class="risk-bar" id="zoneBar" style="width:0%; background:var(--yellow)"></div></div>
+          <div class="risk-note" id="zoneRisk">Calculating...</div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-label">Disruption Frequency</div>
+          <div class="risk-value" id="disruptScore" style="color:var(--orange)">—</div>
+          <div class="risk-bar-wrap"><div class="risk-bar" id="disruptBar" style="width:0%; background:var(--orange)"></div></div>
+          <div class="risk-note" id="disruptRisk">Calculating...</div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-label">Claim History</div>
+          <div class="risk-value" id="claimScore" style="color:var(--green)">—</div>
+          <div class="risk-bar-wrap"><div class="risk-bar" id="claimBar" style="width:0%; background:var(--green)"></div></div>
+          <div class="risk-note" id="claimRisk">Calculating...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🏷️ Choose Your Weekly Plan</div>
+      <div class="card-sub">Premiums recalculated every Sunday using hyper-local risk forecasts</div>
+      <div class="plans">
+        <div class="plan" id="planBasic" onclick="selectPlan('basic', 25, 500)">
+          <div class="plan-badge">Kavach Basic</div>
+          <div class="plan-price">₹25 <span>/ week</span></div>
+          <div class="plan-payout">↑ Up to ₹500 payout</div>
+          <ul class="plan-features">
+            <li>Weather disruptions</li>
+            <li>Up to 2 claims/week</li>
+            <li>24hr cooldown</li>
+          </ul>
+        </div>
+        <div class="plan selected" id="planPlus" onclick="selectPlan('plus', 45, 1000)">
+          <div class="plan-badge">Kavach Plus ⭐</div>
+          <div class="plan-price">₹45 <span>/ week</span></div>
+          <div class="plan-payout">↑ Up to ₹1,000 payout</div>
+          <ul class="plan-features">
+            <li>Weather + Civic disruptions</li>
+            <li>Up to 3 claims/week</li>
+            <li>12hr cooldown</li>
+          </ul>
+        </div>
+        <div class="plan" id="planMax" onclick="selectPlan('max', 75, 1800)">
+          <div class="plan-badge">Kavach Max 🔥</div>
+          <div class="plan-price">₹75 <span>/ week</span></div>
+          <div class="plan-payout">↑ Up to ₹1,800 payout</div>
+          <ul class="plan-features">
+            <li>All 5 trigger types</li>
+            <li>4 claims/week</li>
+            <li>6hr cooldown + priority</li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="premiumDetails" style="margin-top:20px; display:none">
+        <div class="two-col">
+          <div>
+            <div class="info-row"><span class="info-key">Selected Plan</span><span class="info-val text-orange" id="selPlan">Kavach Plus</span></div>
+            <div class="info-row"><span class="info-key">Weekly Premium</span><span class="info-val text-orange" id="selPremium">₹45</span></div>
+            <div class="info-row"><span class="info-key">Max Weekly Payout</span><span class="info-val text-green" id="selPayout">₹1,000</span></div>
+          </div>
+          <div>
+            <div class="info-row"><span class="info-key">Coverage Period</span><span class="info-val">Mon – Sun</span></div>
+            <div class="info-row"><span class="info-key">Payout Channel</span><span class="info-val">UPI (Instant)</span></div>
+            <div class="info-row"><span class="info-key">ML Model</span><span class="info-val text-green">XGBoost v2.1</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline btn-sm" onclick="goStep(1)">← Back</button>
+        <button class="btn btn-primary" onclick="activatePolicy()">Activate Policy →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 3: TRIGGERS -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="sec3">
+    <div class="section-header">
+      <div class="section-title">⚡ Parametric Triggers</div>
+      <span class="ai-tag">🔴 Live Monitoring</span>
+    </div>
+
+    <div id="disruptionAlert" class="disruption-alert">
+      <div class="alert-dot"></div>
+      <span id="alertText">Disruption detected in your zone!</span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌐 Automated Disruption Monitor</div>
+      <div class="card-sub">Tap a trigger to simulate a real-time disruption in <span id="trigZone">HSR Layout, Bengaluru</span>. KavachGo monitors 5 trigger types via OpenWeatherMap, CPCB & Google APIs.</div>
+      <div class="triggers">
+        <div class="trigger-btn" id="trig1" onclick="fireTrigger(1, 'Heavy Rainfall', '🌧️', 'Rainfall > 40mm/hr', 'OpenWeatherMap API', 'Auto-claim initiated')">
+          <div class="trigger-icon">🌧️</div>
+          <div class="trigger-name">Heavy Rainfall</div>
+          <div class="trigger-condition">Threshold: > 40mm / hour</div>
+          <div class="trigger-condition">Source: OpenWeatherMap API</div>
+          <div class="trigger-status">● Monitoring</div>
+        </div>
+        <div class="trigger-btn" id="trig2" onclick="fireTrigger(2, 'Severe Air Quality', '🌫️', 'AQI > 300 (Severe)', 'CPCB Real-time API', 'Zone marked unsafe')">
+          <div class="trigger-icon">🌫️</div>
+          <div class="trigger-name">Severe AQI Alert</div>
+          <div class="trigger-condition">Threshold: AQI > 300</div>
+          <div class="trigger-condition">Source: CPCB API</div>
+          <div class="trigger-status">● Monitoring</div>
+        </div>
+        <div class="trigger-btn" id="trig3" onclick="fireTrigger(3, 'Extreme Heatwave', '🔥', 'Temp > 44°C', 'IMD Weather API', 'Outdoor work halted')">
+          <div class="trigger-icon">🔥</div>
+          <div class="trigger-name">Extreme Heatwave</div>
+          <div class="trigger-condition">Threshold: Temp > 44°C</div>
+          <div class="trigger-condition">Source: IMD API</div>
+          <div class="trigger-status">● Monitoring</div>
+        </div>
+        <div class="trigger-btn" id="trig4" onclick="fireTrigger(4, 'Bandh / Civic Closure', '🚧', 'Declared bandh or curfew', 'Google Maps + News API', 'Zone access blocked')">
+          <div class="trigger-icon">🚧</div>
+          <div class="trigger-name">Bandh / Closure</div>
+          <div class="trigger-condition">Civic shutdown detected</div>
+          <div class="trigger-condition">Source: Google Maps API</div>
+          <div class="trigger-status">● Monitoring</div>
+        </div>
+        <div class="trigger-btn" id="trig5" onclick="fireTrigger(5, 'Dark Store Offline', '📦', 'Dark store unreachable >2hr', 'Platform API (Mock)', 'Earnings window lost')">
+          <div class="trigger-icon">📦</div>
+          <div class="trigger-name">Dark Store Offline</div>
+          <div class="trigger-condition">Offline > 2 hours</div>
+          <div class="trigger-condition">Source: Blinkit Platform API</div>
+          <div class="trigger-status">● Monitoring</div>
+        </div>
+        <div class="trigger-btn" style="background: var(--bg2); border-style: dashed; cursor:default; opacity:0.4">
+          <div class="trigger-icon">🌊</div>
+          <div class="trigger-name">Flash Flood</div>
+          <div class="trigger-condition">Coming in Phase 3</div>
+          <div class="trigger-condition">Source: IMD Flood API</div>
+          <div class="trigger-status">● Not active</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline btn-sm" onclick="goStep(2)">← Back</button>
+        <button class="btn btn-primary" id="proceedClaim" onclick="goStep(4)" style="display:none">View Auto Claim →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 4: AUTO CLAIM -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="sec4">
+    <div class="section-header">
+      <div class="section-title">📋 Automatic Claim System</div>
+      <span class="ai-tag">🤖 Zero-Touch</span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ Claim: <span id="claimTriggerName">Heavy Rainfall</span></div>
+      <div class="card-sub">No manual filing. KavachGo detected the disruption and initiated this claim automatically.</div>
+
+      <div class="claim-flow">
+        <div class="claim-step" id="cs1">
+          <div class="claim-step-icon">🛰️</div>
+          <div class="claim-step-text">
+            <div class="claim-step-title">Disruption Detected</div>
+            <div class="claim-step-detail" id="cs1Detail">Monitoring external data sources...</div>
+          </div>
+          <div class="claim-step-badge badge-pending" id="cs1Badge">Waiting</div>
+        </div>
+        <div class="claim-step" id="cs2">
+          <div class="claim-step-icon">✅</div>
+          <div class="claim-step-text">
+            <div class="claim-step-title">Policy Validation</div>
+            <div class="claim-step-detail">Checking active policy, coverage, and claim limits</div>
+          </div>
+          <div class="claim-step-badge badge-pending" id="cs2Badge">Waiting</div>
+        </div>
+        <div class="claim-step" id="cs3">
+          <div class="claim-step-icon">📍</div>
+          <div class="claim-step-text">
+            <div class="claim-step-title">GPS & Activity Verification</div>
+            <div class="claim-step-detail">Worker location matched to affected zone</div>
+          </div>
+          <div class="claim-step-badge badge-pending" id="cs3Badge">Waiting</div>
+        </div>
+        <div class="claim-step" id="cs4">
+          <div class="claim-step-icon">🤖</div>
+          <div class="claim-step-text">
+            <div class="claim-step-title">AI Fraud Screening</div>
+            <div class="claim-step-detail">Isolation Forest model running anomaly check</div>
+          </div>
+          <div class="claim-step-badge badge-pending" id="cs4Badge">Waiting</div>
+        </div>
+        <div class="claim-step" id="cs5">
+          <div class="claim-step-icon">💸</div>
+          <div class="claim-step-text">
+            <div class="claim-step-title">Payout Approved & Disbursed</div>
+            <div class="claim-step-detail" id="cs5Detail">UPI transfer queued...</div>
+          </div>
+          <div class="claim-step-badge badge-pending" id="cs5Badge">Waiting</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline btn-sm" onclick="goStep(3)">← Back</button>
+        <button class="btn btn-primary" id="runClaimBtn" onclick="runClaimFlow()">▶ Run Claim Flow</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 5: FRAUD DETECTION -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="sec5">
+    <div class="section-header">
+      <div class="section-title">🔍 Fraud Detection Engine</div>
+      <span class="ai-tag">🧠 Isolation Forest</span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">3-Layer Fraud Architecture</div>
+      <div class="card-sub">Every claim passes through rule-based, GPS/activity, and ML anomaly detection before any payout is released.</div>
+
+      <div class="fraud-grid">
+        <div class="fraud-score-ring">
+          <div class="ring-container">
+            <svg class="ring-svg" viewBox="0 0 140 140">
+              <circle class="ring-bg" cx="70" cy="70" r="60"/>
+              <circle class="ring-fill" id="fraudRing" cx="70" cy="70" r="60"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-score" id="fraudScoreNum" style="color:var(--green)">—</div>
+              <div class="ring-label">Fraud Score</div>
+            </div>
+          </div>
+          <div id="fraudVerdict" style="font-family:var(--font-head);font-size:18px;font-weight:700;text-align:center">Awaiting...</div>
+          <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">Score 0–64 = Auto Approve<br>65–84 = Manual Review<br>85+ = Rejected</div>
+          <div class="model-badge">🧠 Isolation Forest v1.4</div>
+        </div>
+
+        <div class="fraud-checks">
+          <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Detection Layers</div>
+          <div class="fraud-check-item" id="fc1">
+            <div class="check-icon">📋</div>
+            <div class="check-label">
+              <div>Rule Engine — Claim Limits</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Max 4 claims/week, 48hr cooldown</div>
+            </div>
+            <div class="check-result" id="fc1r">Pending</div>
+          </div>
+          <div class="fraud-check-item" id="fc2">
+            <div class="check-icon">🌐</div>
+            <div class="check-label">
+              <div>Dual Source Verification</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">≥2 independent APIs confirm disruption</div>
+            </div>
+            <div class="check-result" id="fc2r">Pending</div>
+          </div>
+          <div class="fraud-check-item" id="fc3">
+            <div class="check-icon">📍</div>
+            <div class="check-label">
+              <div>GPS Zone Match</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Worker must be in affected dark store zone</div>
+            </div>
+            <div class="check-result" id="fc3r">Pending</div>
+          </div>
+          <div class="fraud-check-item" id="fc4">
+            <div class="check-icon">🛵</div>
+            <div class="check-label">
+              <div>Activity Paradox Check</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">No deliveries during claimed disruption</div>
+            </div>
+            <div class="check-result" id="fc4r">Pending</div>
+          </div>
+          <div class="fraud-check-item" id="fc5">
+            <div class="check-icon">🤖</div>
+            <div class="check-label">
+              <div>ML Anomaly Detection</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Isolation Forest behavioral analysis</div>
+            </div>
+            <div class="check-result" id="fc5r">Pending</div>
+          </div>
+          <div class="fraud-check-item" id="fc6">
+            <div class="check-icon">🔗</div>
+            <div class="check-label">
+              <div>Duplicate Claim Guard</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">No overlapping claim for same event</div>
+            </div>
+            <div class="check-result" id="fc6r">Pending</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline btn-sm" onclick="goStep(4)">← Back</button>
+        <button class="btn btn-primary" id="runFraudBtn" onclick="runFraudCheck()">🔍 Run Fraud Analysis</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 6: PAYOUT -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="sec6">
+    <div class="section-header">
+      <div class="section-title">💸 Instant Payout</div>
+      <span class="ai-tag">⚡ UPI Simulated</span>
+    </div>
+
+    <div class="card">
+      <div class="payout-card">
+        <div class="payout-icon">✅</div>
+        <div class="payout-amount" id="payoutAmount">₹0</div>
+        <div class="payout-label">Credited to <strong id="payoutUPI">suresh.kumar@upi</strong></div>
+        <div class="payout-method">🟢 UPI Transfer Successful (Simulated · Razorpay Sandbox)</div>
+
+        <div class="payout-timeline">
+          <div class="payout-tl-item">
+            <div class="payout-tl-val" id="ptTime">—</div>
+            <div class="payout-tl-lbl">Processed in</div>
+          </div>
+          <div class="payout-tl-item">
+            <div class="payout-tl-val" id="ptPlan">—</div>
+            <div class="payout-tl-lbl">Active Plan</div>
+          </div>
+          <div class="payout-tl-item">
+            <div class="payout-tl-val" id="ptClaims">—</div>
+            <div class="payout-tl-lbl">Claims This Week</div>
+          </div>
+          <div class="payout-tl-item">
+            <div class="payout-tl-val" id="ptLeft">—</div>
+            <div class="payout-tl-lbl">Remaining This Week</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline btn-sm" onclick="goStep(5)">← Back</button>
+        <button class="btn btn-primary" onclick="goStep(7)">View Dashboard →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 7: DASHBOARD -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="sec7">
+    <div class="section-header">
+      <div class="section-title">📊 Analytics Dashboard</div>
+      <span class="ai-tag">📡 Real-time</span>
+    </div>
+
+    <!-- Worker View -->
+    <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Worker View — <span id="dashWorkerName">Suresh Kumar</span></div>
+
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-val text-green" id="dEarnings">₹1,000</div>
+        <div class="stat-lbl">Income Protected This Week</div>
+        <div class="progress-wrap"><div class="progress-fill" id="dEarnBar" style="width:55%"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-val text-orange" id="dClaims">1</div>
+        <div class="stat-lbl">Claims This Week</div>
+        <div class="progress-wrap"><div class="progress-fill" style="width:25%;background:var(--orange)"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🛡️</div>
+        <div class="stat-val" id="dPlan">Plus</div>
+        <div class="stat-lbl">Active Plan</div>
+        <div style="font-size:11px;color:var(--green);margin-top:6px">● Coverage Active</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏰</div>
+        <div class="stat-val">4 Days</div>
+        <div class="stat-lbl">Until Policy Renewal</div>
+        <div class="progress-wrap"><div class="progress-fill" style="width:43%;background:var(--teal)"></div></div>
+      </div>
+    </div>
+
+    <!-- Weekly Chart -->
+    <div class="card">
+      <div class="card-title">📈 Weekly Disruption Activity</div>
+      <div class="card-sub">Days with disruption payouts in the past 4 weeks</div>
+      <div class="chart-bars" id="chartBars">
+        <!-- Generated by JS -->
+      </div>
+    </div>
+
+    <!-- Insurer Admin View -->
+    <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:24px 0 12px">Insurer / Admin View — Predictive Analytics</div>
+
+    <div class="two-col">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">📉 Loss Ratio Monitor</div>
+        <div class="card-sub">Claims vs premiums collected</div>
+        <div class="info-row"><span class="info-key">Premiums Collected (Week)</span><span class="info-val text-green">₹4,23,500</span></div>
+        <div class="info-row"><span class="info-key">Total Claims Paid</span><span class="info-val text-orange">₹1,92,000</span></div>
+        <div class="info-row"><span class="info-key">Loss Ratio</span><span class="info-val">45.3%</span></div>
+        <div class="info-row"><span class="info-key">Fraud Prevented</span><span class="info-val text-green">₹38,400 (91.2% catch rate)</span></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">🔮 Next-Week Forecast</div>
+        <div class="card-sub">ML model prediction for upcoming week</div>
+        <div class="info-row"><span class="info-key">Predicted Disruption Days</span><span class="info-val text-orange" id="forecastDays">3</span></div>
+        <div class="info-row"><span class="info-key">Estimated Claims</span><span class="info-val" id="forecastClaims">412</span></div>
+        <div class="info-row"><span class="info-key">Premium Adjustment</span><span class="info-val text-yellow" id="forecastPremium">+₹5 (High Risk Week)</span></div>
+        <div class="info-row"><span class="info-key">Confidence</span><span class="info-val text-green">87.4%</span></div>
+      </div>
+    </div>
+
+    <div class="btn-row" style="justify-content:center; margin-top:32px">
+      <button class="btn btn-outline" onclick="resetDemo()">🔄 Reset Demo</button>
+      <button class="btn btn-primary" onclick="fireTrigger(1, 'Heavy Rainfall', '🌧️', 'Rainfall > 40mm/hr', 'OpenWeatherMap API', 'Auto-claim initiated'); goStep(3)">⚡ Simulate New Disruption</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast">
+  <span id="toastIcon">✅</span>
+  <span id="toastMsg">Action completed</span>
+</div>
+
+<script>
+// ──── STATE ────
+let state = {
+  currentStep: 1,
+  worker: { name: 'Suresh Kumar', platform: 'Blinkit', zone: 'HSR Layout, Bengaluru', earnings: 5000, tenure: 3 },
+  plan: { name: 'Kavach Plus', premium: 45, payout: 1000 },
+  trigger: { id: null, name: '', icon: '', condition: '', source: '', effect: '' },
+  claimAmount: 0,
+  claimsThisWeek: 0,
+  policyActive: false,
+  fraudScore: 0
+};
+
+// ──── NAVIGATION ────
+function goStep(n) {
+  if (n > 1 && !state.policyActive && n !== 1) {
+    if (n > 2) { showToast('⚠️', 'Please complete onboarding and activate a policy first'); return; }
+  }
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.getElementById('sec' + n).classList.add('visible');
+
+  document.querySelectorAll('.step-item').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i + 1 < n) el.classList.add('done');
+    else if (i + 1 === n) el.classList.add('active');
+  });
+
+  state.currentStep = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (n === 2 && state.policyActive) populateRisk();
+  if (n === 6) showPayout();
+  if (n === 7) buildDashboard();
+}
+
+// ──── ONBOARDING ────
+function doOnboard() {
+  const name = document.getElementById('workerName').value.trim() || 'Suresh Kumar';
+  const platform = document.getElementById('workerPlatform');
+  const zone = document.getElementById('workerZone');
+  const earnings = parseInt(document.getElementById('workerEarnings').value);
+  const tenure = parseInt(document.getElementById('workerTenure').value);
+
+  const platformText = platform.options[platform.selectedIndex].text;
+  const zoneText = zone.options[zone.selectedIndex].text;
+
+  state.worker = { name, platform: platformText.split(' ')[0], fullPlatform: platformText, zone: zoneText, earnings, tenure };
+  state.policyActive = true;
+
+  showToast('🎉', `Welcome, ${name}! Calculating your AI risk profile...`);
+  setTimeout(() => goStep(2), 600);
+}
+
+// ──── RISK PROFILE ────
+const zoneRiskMap = {
+  hsr: [62, 'Moderate', '#FFD600'],
+  koramangala: [71, 'High', '#FF5722'],
+  indiranagar: [55, 'Low-Medium', '#00BCD4'],
+  whitefield: [48, 'Low', '#00E676'],
+  delhi_south: [78, 'High', '#FF5722'],
+  mumbai_bandra: [83, 'Very High', '#FF1744'],
+  hyderabad: [67, 'Moderate-High', '#FF7043'],
+  pune: [52, 'Low-Medium', '#00BCD4'],
+};
+
+function populateRisk() {
+  const zoneEl = document.getElementById('workerZone');
+  const zoneKey = zoneEl.value;
+  const [score, label, color] = zoneRiskMap[zoneKey] || [60, 'Moderate', '#FFD600'];
+
+  const disrupt = Math.min(95, score + Math.floor(Math.random() * 15) - 5);
+  const claim = Math.max(10, 100 - state.worker.tenure * 8 + Math.floor(Math.random() * 10));
+
+  document.getElementById('avatarInitial').textContent = state.worker.name[0].toUpperCase();
+  document.getElementById('profileName').textContent = state.worker.name;
+  document.getElementById('profileDetail').textContent = `${state.worker.platform} · ${state.worker.zone}`;
+
+  setTimeout(() => {
+    document.getElementById('zoneScore').textContent = score;
+    document.getElementById('zoneScore').style.color = color;
+    document.getElementById('zoneBar').style.width = score + '%';
+    document.getElementById('zoneBar').style.background = color;
+    document.getElementById('zoneRisk').textContent = label + ' risk zone';
+
+    document.getElementById('disruptScore').textContent = disrupt;
+    document.getElementById('disruptBar').style.width = disrupt + '%';
+    document.getElementById('disruptRisk').textContent = `${disrupt} disruption days / year (est.)`;
+
+    document.getElementById('claimScore').textContent = claim;
+    document.getElementById('claimBar').style.width = claim + '%';
+    document.getElementById('claimBar').style.color = 'var(--green)';
+    document.getElementById('claimRisk').textContent = claim < 40 ? 'Clean history ✓' : claim < 70 ? 'Normal history' : 'Some claims on record';
+
+    document.getElementById('premiumDetails').style.display = 'block';
+  }, 400);
+}
+
+// ──── PLAN SELECTION ────
+function selectPlan(id, price, payout) {
+  document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
+  document.getElementById('plan' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('selected');
+  state.plan = { name: 'Kavach ' + id.charAt(0).toUpperCase() + id.slice(1), premium: price, payout };
+  document.getElementById('selPlan').textContent = state.plan.name;
+  document.getElementById('selPremium').textContent = '₹' + price;
+  document.getElementById('selPayout').textContent = '₹' + payout.toLocaleString('en-IN');
+}
+
+function activatePolicy() {
+  state.policyActive = true;
+  showToast('✅', `${state.plan.name} activated! ₹${state.plan.premium}/week`);
+  document.getElementById('trigZone').textContent = state.worker.zone;
+  setTimeout(() => goStep(3), 500);
+}
+
+// ──── TRIGGERS ────
+function fireTrigger(id, name, icon, condition, source, effect) {
+  document.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('fired'));
+  const btn = document.getElementById('trig' + id);
+  btn.classList.add('fired');
+  btn.querySelector('.trigger-status').textContent = '🔴 TRIGGERED';
+
+  state.trigger = { id, name, icon, condition, source, effect };
+  state.claimAmount = Math.round(state.plan.payout * (0.4 + Math.random() * 0.35));
+
+  document.getElementById('disruptionAlert').classList.add('show');
+  document.getElementById('alertText').textContent = `${icon} ${name} detected in ${state.worker.zone} — Claim auto-initiated`;
+  document.getElementById('claimTriggerName').textContent = `${icon} ${name}`;
+
+  showToast(icon, `${name} detected! Auto-claim initiated.`);
+  document.getElementById('proceedClaim').style.display = 'inline-flex';
+
+  // reset claim steps
+  ['cs1','cs2','cs3','cs4','cs5'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active','done');
+  });
+  ['cs1Badge','cs2Badge','cs3Badge','cs4Badge','cs5Badge'].forEach(id => {
+    document.getElementById(id).className = 'claim-step-badge badge-pending';
+    document.getElementById(id).textContent = 'Waiting';
+  });
+  document.getElementById('runClaimBtn').style.display = 'inline-flex';
+}
+
+// ──── CLAIM FLOW ────
+async function runClaimFlow() {
+  document.getElementById('runClaimBtn').style.display = 'none';
+
+  const steps = [
+    { el:'cs1', badge:'cs1Badge', delay:0, detail:'cs1Detail',
+      detailText: `${state.trigger.icon} ${state.trigger.name} confirmed via ${state.trigger.source}. ${state.trigger.condition}.`,
+      badgeText: 'Confirmed', badgeClass: 'badge-done' },
+    { el:'cs2', badge:'cs2Badge', delay:900,
+      badgeText: `${state.plan.name} · ₹${state.plan.payout.toLocaleString()} coverage`, badgeClass: 'badge-done' },
+    { el:'cs3', badge:'cs3Badge', delay:1900,
+      badgeText: '✓ Zone Matched', badgeClass: 'badge-done' },
+    { el:'cs4', badge:'cs4Badge', delay:2900,
+      badgeText: '🤖 Running...', badgeClass: 'badge-processing' },
+    { el:'cs5', badge:'cs5Badge', delay:4000, detail:'cs5Detail',
+      detailText: `₹${state.claimAmount.toLocaleString('en-IN')} → UPI transfer to ${state.worker.name.split(' ')[0].toLowerCase()}.${state.worker.name.split(' ').slice(-1)[0].toLowerCase()}@upi`,
+      badgeText: '💸 Paid', badgeClass: 'badge-done' },
+  ];
+
+  for (let i = 0; i < steps.length; i++) {
+    await delay(i === 0 ? 200 : steps[i].delay - steps[i-1].delay);
+    const s = steps[i];
+    const el = document.getElementById(s.el);
+    if (i > 0) document.getElementById(steps[i-1].el).classList.remove('active');
+    if (i > 0) document.getElementById(steps[i-1].el).classList.add('done');
+    el.classList.add('active');
+    if (s.detail) document.getElementById(s.detail).textContent = s.detailText;
+    const badge = document.getElementById(s.badge);
+    badge.className = 'claim-step-badge ' + s.badgeClass;
+    badge.textContent = s.badgeText;
+  }
+
+  await delay(500);
+  document.getElementById('cs5').classList.remove('active');
+  document.getElementById('cs5').classList.add('done');
+  document.getElementById('cs4Badge').className = 'claim-step-badge badge-done';
+  document.getElementById('cs4Badge').textContent = '✓ Cleared';
+
+  state.claimsThisWeek++;
+  showToast('💸', `Claim approved! ₹${state.claimAmount.toLocaleString('en-IN')} will be disbursed`);
+
+  setTimeout(() => {
+    document.querySelector('#sec4 .btn-row').insertAdjacentHTML('afterbegin',
+      `<button class="btn btn-primary btn-sm" onclick="goStep(5)">View Fraud Report →</button>`);
+  }, 800);
+}
+
+// ──── FRAUD CHECK ────
+async function runFraudCheck() {
+  document.getElementById('runFraudBtn').style.display = 'none';
+
+  const checks = ['fc1','fc2','fc3','fc4','fc5','fc6'];
+  const results = ['Within limit ✓', '2 sources confirmed ✓', 'HSR Layout match ✓', 'No activity detected ✓', 'Score: Low risk ✓', 'No duplicate ✓'];
+
+  for (let i = 0; i < checks.length; i++) {
+    await delay(i === 0 ? 200 : 500);
+    const el = document.getElementById(checks[i]);
+    el.classList.add('checked');
+    document.getElementById(checks[i] + 'r').textContent = results[i];
+  }
+
+  state.fraudScore = Math.floor(Math.random() * 30) + 15; // Low: 15-44
+
+  await delay(400);
+  const ring = document.getElementById('fraudRing');
+  const num = document.getElementById('fraudScoreNum');
+  const circumference = 376;
+  const dashOffset = circumference - (state.fraudScore / 100) * circumference;
+  ring.style.strokeDashoffset = dashOffset;
+  ring.style.stroke = state.fraudScore < 64 ? 'var(--green)' : state.fraudScore < 85 ? 'var(--yellow)' : 'var(--red)';
+  num.textContent = state.fraudScore;
+  num.style.color = state.fraudScore < 64 ? 'var(--green)' : state.fraudScore < 85 ? 'var(--yellow)' : 'var(--red)';
+
+  document.getElementById('fraudVerdict').textContent = state.fraudScore < 64 ? '✅ AUTO APPROVED' : state.fraudScore < 85 ? '⚠️ REVIEW NEEDED' : '❌ REJECTED';
+  document.getElementById('fraudVerdict').style.color = state.fraudScore < 64 ? 'var(--green)' : state.fraudScore < 85 ? 'var(--yellow)' : 'var(--red)';
+
+  showToast('🔍', `Fraud score: ${state.fraudScore}/100 — ${state.fraudScore < 64 ? 'Auto Approved!' : 'Manual Review'}`);
+
+  setTimeout(() => {
+    document.querySelector('#sec5 .btn-row').insertAdjacentHTML('afterbegin',
+      `<button class="btn btn-primary btn-sm" onclick="goStep(6)">View Payout →</button>`);
+  }, 600);
+}
+
+// ──── PAYOUT ────
+function showPayout() {
+  const upiHandle = state.worker.name.toLowerCase().replace(/\s+/g,'.')+`@upi`;
+  document.getElementById('payoutUPI').textContent = upiHandle;
+  document.getElementById('ptPlan').textContent = state.plan.name.replace('Kavach ', '');
+
+  const remaining = state.plan.payout - state.claimAmount;
+  document.getElementById('ptLeft').textContent = '₹' + remaining.toLocaleString('en-IN');
+  document.getElementById('ptClaims').textContent = state.claimsThisWeek;
+  document.getElementById('ptTime').textContent = '3.2 sec';
+
+  setTimeout(() => {
+    const el = document.getElementById('payoutAmount');
+    el.classList.add('show');
+    animateCount(el, 0, state.claimAmount, '₹', '');
+    showToast('🎉', `₹${state.claimAmount.toLocaleString('en-IN')} credited to ${state.worker.name}!`);
+  }, 300);
+}
+
+function animateCount(el, from, to, prefix, suffix) {
+  const dur = 1200;
+  const start = performance.now();
+  function frame(now) {
+    const t = Math.min((now - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    el.textContent = prefix + Math.round(from + (to - from) * ease).toLocaleString('en-IN') + suffix;
+    if (t < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+// ──── DASHBOARD ────
+function buildDashboard() {
+  document.getElementById('dashWorkerName').textContent = state.worker.name;
+  document.getElementById('dPlan').textContent = state.plan.name.replace('Kavach ', '');
+
+  const totalProtected = state.claimAmount || Math.round(state.plan.payout * 0.6);
+  document.getElementById('dEarnings').textContent = '₹' + totalProtected.toLocaleString('en-IN');
+  document.getElementById('dEarnBar').style.width = (totalProtected / state.plan.payout * 100) + '%';
+  document.getElementById('dClaims').textContent = state.claimsThisWeek;
+
+  // Chart
+  const bars = document.getElementById('chartBars');
+  const weeks = ['W1','W2','W3','W4'];
+  const vals = [2,1,3,state.claimsThisWeek];
+  const maxV = Math.max(...vals);
+  bars.innerHTML = weeks.map((w,i) => `
+    <div class="bar-item">
+      <div class="bar" style="height:${vals[i]/maxV*68}px; background:${i===3?'var(--green)':'var(--orange)'}; opacity:${i===3?1:0.5}"></div>
+      <div class="bar-lbl">${w}</div>
+    </div>`).join('');
+
+  // Zone-based forecast
+  const zoneEl = document.getElementById('workerZone');
+  if (zoneEl) {
+    const zoneKey = zoneEl.value;
+    const [score] = zoneRiskMap[zoneKey] || [60, 'Moderate', '#FFD600'];
+    const days = score > 70 ? 4 : score > 55 ? 3 : 2;
+    const claims = Math.round(days * 130 + Math.random() * 50);
+    document.getElementById('forecastDays').textContent = days;
+    document.getElementById('forecastClaims').textContent = claims;
+    document.getElementById('forecastPremium').textContent = score > 70 ? '+₹8 (High Risk)' : score > 55 ? '+₹4 (Moderate)' : '–₹2 (Low Risk)';
+  }
+}
+
+// ──── UTILS ────
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+let toastTimer;
+function showToast(icon, msg) {
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent = msg;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function resetDemo() {
+  state = {
+    currentStep: 1,
+    worker: { name: 'Suresh Kumar', platform: 'Blinkit', zone: 'HSR Layout, Bengaluru', earnings: 5000, tenure: 3 },
+    plan: { name: 'Kavach Plus', premium: 45, payout: 1000 },
+    trigger: { id: null, name: '', icon: '', condition: '', source: '', effect: '' },
+    claimAmount: 0,
+    claimsThisWeek: 0,
+    policyActive: false,
+    fraudScore: 0
+  };
+  document.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('fired'));
+  document.getElementById('disruptionAlert').classList.remove('show');
+  document.getElementById('proceedClaim').style.display = 'none';
+  document.getElementById('fraudRing').style.strokeDashoffset = 376;
+  document.getElementById('fraudScoreNum').textContent = '—';
+  document.getElementById('fraudVerdict').textContent = 'Awaiting...';
+  document.querySelectorAll('.fraud-check-item').forEach(el => el.classList.remove('checked'));
+  ['fc1r','fc2r','fc3r','fc4r','fc5r','fc6r'].forEach(id => document.getElementById(id).textContent = 'Pending');
+  document.getElementById('payoutAmount').classList.remove('show');
+  document.getElementById('runFraudBtn').style.display = 'inline-flex';
+  // remove dynamically added buttons
+  document.querySelectorAll('#sec4 .btn-row .btn-primary').forEach((el,i) => { if(i>0) el.remove(); });
+  document.querySelectorAll('#sec5 .btn-row .btn-primary').forEach((el,i) => { if(i>0) el.remove(); });
+  goStep(1);
+  showToast('🔄', 'Demo reset! Start fresh.');
+}
+
+// ──── INIT ────
+selectPlan('plus', 45, 1000);
+document.getElementById('premiumDetails').style.display = 'block';
+document.getElementById('selPlan').textContent = 'Kavach Plus';
+document.getElementById('selPremium').textContent = '₹45';
+document.getElementById('selPayout').textContent = '₹1,000';
+</script>
+</body>
+</html>
